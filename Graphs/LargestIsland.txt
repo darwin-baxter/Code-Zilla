@@ -1,0 +1,56 @@
+You have been given a non-empty grid consisting of only 0s and 1s. You have to find the maximum area of an island in the given grid.
+An island is a group of 1s (representing land) connected horizontally, vertically or diagonally. 
+You can assume that all four edges of the grid are surrounded by 0s (representing water).
+
+
+int dfsArea(vector<vector<int>> &grid, int i, int j, int n,int m)
+{
+	if(i<0 || i>=n || j<0 || j>=m || grid[i][j]==0)
+		return 0;
+	grid[i][j]=0;
+	int area=1;
+	int dir[8][2] = {{-1,0},{1,0},{0,-1},{0,1},{-1,-1},{-1,1},{1,-1},{1,1}};
+	for(int k=0;k<8;k++)
+		area+=dfsArea(grid,i+dir[k][0],j+dir[k][1],n,m);
+	return area;
+}
+int bfsArea(vector<vector<int>> &grid, int i,int j, int n,int m)
+{
+	int area=0;
+	queue<pair<int,int>> q;
+	q.push({i,j});
+	grid[i][j]=0;
+	int dir[8][2]={{-1,0},{1,0},{0,-1},{0,1},{1,1},{1,-1},{-1,1},{-1,-1}};
+	while(!q.empty())
+	{
+		int x = q.front().first;
+		int y = q.front().second;
+		q.pop();area++;
+		for(int k=0;k<8;k++)
+		{
+			int newX=x+dir[k][0];
+			int newY=y+dir[k][1];
+			if(newX>=0 && newY>=0 && newX<n && newY<m &&
+				grid[newx][newY]==1)	
+			{
+				q.push({newX, newY});
+				grid[newX][newY]=0;
+			}
+`		}
+	}
+	return area;
+}	
+int maxArea(vector<vector<int>> &grid, int n, int m)
+{
+	int maxA=0;
+	for(int i=0;i<n;i++)
+	{
+		for(int j=0;j<m;j++)
+		{
+			if(grid[i][j]==1)
+				maxA=max(maxA, dfsArea(grid,i,j,n,m);
+		}
+	}
+	return maxA;
+}
+

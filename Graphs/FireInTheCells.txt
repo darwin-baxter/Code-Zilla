@@ -1,0 +1,94 @@
+#include <cstring>
+#include <climits>
+#include <queue>
+#include <map>
+bool isValid(int curx, int cury, int dx, int dy, int n, int m){
+    return (curx + dx >= 0 && curx + dx < n && cury + dy >= 0 && cury + dy < m);
+}
+bool isEscapeCell(int curx, int cury, int n, int m)
+{
+    return (curx == 0 && (cury > 0 && cury < m - 1))     ||
+           (curx == n - 1 && (cury > 0 && cury < m - 1)) ||
+           (cury == 0 && (curx > 0 && curx < n - 1))     ||
+           (cury == m - 1 && (curx > 0 && curx < n - 1));
+}
+int fireInTheCells(vector<vector<int>> &mat, int n, int m, int x, int y)
+{
+    vector<vector<int>> timeOfFire(n, vector<int>(m, 0));
+
+    vector<vector<bool>> vis(n + 2, vector<bool>(m + 2, false));
+    // Queue for performing multiSource BFS.
+    queue<pair<int, int>> q;
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < m; j++)
+            if (mat[i][j] == 0)
+            {
+                 q.push({i,j});
+                 timeOfFire[i][j] = 0;
+                 vis[i][j] = true;
+            }
+    // Array used to represent right,down,left,up moves.
+    int x1[5] = {0, 1, 0, -1, 0};
+    int timer = 1; 
+    while (!q.empty())
+    {
+        int sz = q.size();
+        for (int i = 0; i < sz; i++)
+        {
+			auto cur = q.front();
+            q.pop();
+            for (int i = 0; i < 4; i++)
+            {                 
+                int dx = x1[i];
+                int dy = x1[i + 1];
+                if (isValid(cur.first, cur.second, dx, dy, n, m))
+                    if (mat[cur.first + dx][cur.second + dy] == 1 && !vis[cur.first + dx][cur.second + dy] )
+                    {
+                        vis[cur.first + dx][cur.second + dy] = true;
+                        timeOfFire[cur.first + dx][cur.second + dy] = timer;
+                        q.push({cur.first + dx,cur.second + dy});
+                    }
+            }
+        }
+        timer++;
+    }
+    bool possible = false;
+    timer = 0;
+    q.push({x, y}); 
+    mat[x][y] = 0;
+    // Another BFS to check if person can survive or not.
+    while (!q.empty())
+    { 
+        int sz = q.size();
+        for (int i = 0; i < sz; i++)
+        {
+            auto cur = q.front();
+            q.pop();
+            if (isEscapeCell(cur.first, cur.second, n, m))
+            {   possible = true;
+                break;
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                int dx = x1[i];
+                int dy = x1[i + 1];
+                int nextx = cur.first + dx;
+                int nexty = cur.second + dy;
+
+                if (nextx >= 0 && nextx < n && nexty >= 0 && nexty < m && mat[nextx][nexty] == 1)
+                    if ((timer + 1) < timeOfFire[nextx][nexty])
+                    {
+                        q.push({nextx, nexty});
+                        mat[nextx][nexty] = 0;
+                    }
+            }
+        }
+        if (possible)
+            break;
+        timer++;
+    }
+	if(possible) 
+        return timer;
+    else 
+        return -1;
+}

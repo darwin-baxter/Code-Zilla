@@ -1,0 +1,33 @@
+bool BMM( int u, vector<bool> &visited, vector<int> &assign,vector<vector<int>> &mat,int n)
+{
+    for(int v=0;v<n;v++)
+    {
+        if(mat[u][v] && !visited[v])
+        {
+            visited[v]=true;
+      
+            if(assign[v]<0 || BMM(assign[v],visited,assign,mat,n))
+            {
+                assign[v]=u;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+int maxMatch(vector<vector<int> > &mat) 
+{	int count=0;
+    int m = mat.size();
+    int n= mat[0].size();
+    vector<int> assign(n);
+ 	fill(assign.begin(),assign.end(),-1);
+    for(int u=0;u<m;u++)
+    {	
+        vector<bool> visited(n);
+        for(int i=0;i<n;i++)
+            visited[i]=false;
+        if(BMM(u,visited,assign,mat,n))
+            count++;
+    }
+ return count;
+}

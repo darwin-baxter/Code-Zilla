@@ -1,0 +1,20 @@
+Given an array a[] of size N which contains elements from 0 to N-1, 
+you need to find all the elements occurring more than once in the given array.
+Expected Time Complexity: O(n).
+Expected Auxiliary Space: O(n).
+
+class Solution{
+  public:
+    vector<int> duplicates(int arr[], int n) {
+        vector<int> ans;
+        for(int i=0;i<n;i++)
+            arr[arr[i]%n]+=n;
+        for(int i=0;i<n;i++)
+            if(arr[i]/n>1)
+                ans.push_back(i);
+        if(ans.size()==0)
+            ans.push_back(-1);
+    return(ans);
+    
+    }
+};

@@ -1,0 +1,56 @@
+You are given a connected, undirected and acyclic graph with some of the nodes as marked and a positive number 'K'. 
+You need to return the count of all such nodes which have a distance from all marked nodes less than 'K', 
+which means every node whose distance from all marked nodes is less than 'K', should be counted in the result.
+
+
+#include<queue>
+
+int bfs(vector<vector<int>> &graph,bool marks[], int u, vector<int>& distance)
+{
+    int lastmarked;
+    queue<int> q;
+    q.push(u);
+    distance[u]=0;
+    while(!q.empty())
+    {
+        int u=q.front();
+        q.pop();
+        if(marks[u])
+            lastmarked=u;
+        for(int i=0;i<graph[u].size();i++)
+        {
+            if(distance[graph[u][i]]==-1)
+            {    distance[graph[u][i]] = distance[u]+1;
+            	q.push(graph[u][i]);
+            }
+        }
+    }
+    return lastmarked;
+}
+int nodesWithinKDistance( vector<vector<int>> &edges, int v, vector<int> &marked, int m, int k){
+    vector<vector<int>> grp(v);
+    int start, end;
+    for(int i=0;i<edges.size();i++)
+    {
+        start=edges[i][0]-1;
+        end=edges[i][1]-1;
+        grp[start].push_back(end);
+        grp[end].push_back(start);
+    }
+    for(int i=0;i<m;i++)
+        marked[i]=marked[i]-1;
+    bool marks[v]={false};
+    for(int i=0;i<m;i++)
+        marks[marked[i]]=true;
+    vector<int> temp(v,-1), distance1(v,-1), distance2(v,-1);
+    start = bfs(grp,marks,0,temp);
+    end = bfs(grp,marks, start,distance1);
+    bfs(grp,marks,end,distance2);
+    int result=0;
+    for(int i=0;i<v;i++)
+    {   
+        if(distance1[i]<=k && distance2[i]<=k)
+            	result++;
+    }
+    return result;
+}
