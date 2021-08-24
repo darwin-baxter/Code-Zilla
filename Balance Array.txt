@@ -1,0 +1,53 @@
+Given an integer array A of size N. You need to count the number of special elements in the given array.
+
+A element is special if removal of that element make the array balanced.
+
+Array will be balanced if sum of even index element equal to sum of odd index element.
+
+
+
+int Solution::solve(vector<int> &arr) {
+    int n=arr.size(),cnt=0;
+    long long int even[n],odd[n];
+    even[0]=arr[0];
+    even[1]=even[0];
+    odd[0]=0;
+    odd[1]=arr[1];
+    for(int i=2;i<n;i++){
+        if(i%2==0){
+            even[i]=even[i-2]+arr[i];
+            odd[i]=odd[i-1];
+        }else{
+            even[i]=even[i-1];
+            odd[i]=arr[i]+odd[i-2];
+        }
+    }
+    for(int i=0;i<n;i++)
+    {
+        int sum=0,res=0;
+        if(i%2==0)
+        {
+            if(i>0)
+                sum+=even[i-2];
+            sum+=(odd[n-1]-odd[i]);
+            res+=odd[i];
+            res+=(even[n-1]-even[i]);
+            if(sum==res){
+                cnt++;
+            }
+        }
+        else{
+            if(i>1){
+                sum+=odd[i-2];
+            }
+            sum+=(even[n-1]-even[i]);
+            res+=even[i];
+            res+=(odd[n-1]-odd[i]);
+            if(sum==res){
+                cnt++;
+            }
+        }
+    }
+    return cnt;
+    
+}
